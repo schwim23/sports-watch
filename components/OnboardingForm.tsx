@@ -37,7 +37,8 @@ export default function OnboardingForm({
 
   const toggle = (set: Set<string>, id: string) => {
     const next = new Set(set);
-    next.has(id) ? next.delete(id) : next.add(id);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
     return next;
   };
 
@@ -73,7 +74,7 @@ export default function OnboardingForm({
       </div>
       <div className="card">
         <h2>Streaming subscriptions</h2>
-        <p className="muted">We'll only show options you can actually watch.</p>
+        <p className="muted">We&apos;ll only show options you can actually watch.</p>
         <div className="stack">
           {SERVICES.map((s) => (
             <label key={s.id} className="row">
