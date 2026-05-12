@@ -1,0 +1,231 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// --- Auth.js (NextAuth) tables ---
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  emailVerified DateTime?
+  zip           String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts          Account[]
+  sessions          Session[]
+  subscriptions     UserSubscription[]
+  follows           TeamFollow[]
+  pushSubscriptions PushSubscription[]
+  notificationLogs  NotificationLog[]
+
+  @@index([zip])
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// --- Domain tables ---
+
+enum Sport {
+  MLB
+  NFL
+  NBA
+  NHL
+}
+
+enum StreamingService {
+  MLB_TV
+  YOUTUBE_TV
+  HULU_LIVE
+  FUBO
+  ESPN_PLUS
+  PEACOCK
+  APPLE_TV
+  PRIME
+  SLING
+  DIRECTV_STREAM
+}
+
+enum BroadcastType {
+  LOCAL_RSN
+  NATIONAL
+  STREAMING_EXCLUSIVE
+  RADIO
+}
+
+enum GameStatus {
+  SCHEDULED
+  PRE_GAME
+  IN_PROGRESS
+  FINAL
+  POSTPONED
+  SUSPENDED
+  CANCELLED
+}
+
+model UserSubscription {
+  id        String           @id @default(cuid())
+  userId    String
+  service   StreamingService
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, service])
+  @@index([userId])
+}
+
+model TeamFollow {
+  id        String   @id @default(cuid())
+  userId    String
+  teamId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, teamId])
+  @@index([userId])
+}
+
+model Rsn {
+  id            String   @id @default(cuid())
+  name          String   @unique // "YES Network", "NESN"
+  shortName     String?
+  marketZips    String[] // ZIP3 prefixes covered
+  deepLinkBase  String? // base URL for deep linking
+  createdAt     DateTime @default(now())
+
+  teams Team[]
+}
+
+model Team {
+  id            String  @id @default(cuid())
+  externalId    String  @unique // e.g. MLB statsapi team id as string
+  sport         Sport
+  name          String
+  abbreviation  String
+  city          String?
+  marketCode    String? // internal market identifier
+  primaryRsnId  String?
+  logoUrl       String?
+
+  primaryRsn Rsn?         @relation(fields: [primaryRsnId], references: [id])
+  homeGames  Game[]       @relation("HomeTeam")
+  awayGames  Game[]       @relation("AwayTeam")
+  follows    TeamFollow[]
+
+  @@index([sport])
+}
+
+model Game {
+  id           String     @id @default(cuid())
+  externalId   String     @unique // gamePk for MLB
+  sport        Sport
+  homeTeamId   String
+  awayTeamId   String
+  startsAt     DateTime
+  status       GameStatus @default(SCHEDULED)
+  seasonType   String? // "R" | "P" | "S" etc.
+  venueName    String?
+  // Live state (populated by refresh-status cron + client polling)
+  homeScore    Int?
+  awayScore    Int?
+  inningOrdinal String?
+  inningHalf   String?
+  outs         Int?
+  baseState    Json?
+  lastSyncedAt DateTime?
+
+  homeTeam   Team        @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam   Team        @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  broadcasts Broadcast[]
+  notifications NotificationLog[]
+
+  @@index([startsAt])
+  @@index([sport, startsAt])
+  @@index([status])
+}
+
+model Broadcast {
+  id               String        @id @default(cuid())
+  gameId           String
+  type             BroadcastType
+  callsign         String? // "YES", "ESPN", etc.
+  market           String? // "home" | "away" | "national"
+  service          StreamingService? // when type=STREAMING_EXCLUSIVE
+  deepLinkOverride String?
+  createdAt        DateTime      @default(now())
+
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, type, callsign, market, service])
+  @@index([gameId])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model NotificationLog {
+  id        String   @id @default(cuid())
+  userId    String
+  gameId    String
+  type      String // "pre_game_30"
+  sentAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, gameId, type])
+  @@index([sentAt])
+}

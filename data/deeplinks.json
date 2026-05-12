@@ -1,0 +1,62 @@
+{
+  "MLB_TV": {
+    "ios": "mlbatbat://game/{gamePk}",
+    "android": "intent://www.mlb.com/tv/g{gamePk}#Intent;scheme=https;package=com.bamnetworks.mobile.android.gameday.atbat;S.browser_fallback_url=https%3A%2F%2Fwww.mlb.com%2Ftv%2Fg{gamePk};end",
+    "web": "https://www.mlb.com/tv/g{gamePk}",
+    "displayName": "MLB.tv"
+  },
+  "YOUTUBE_TV": {
+    "ios": "youtubetv://",
+    "android": "intent://#Intent;scheme=youtubetv;package=com.google.android.apps.youtube.unplugged;S.browser_fallback_url=https%3A%2F%2Ftv.youtube.com;end",
+    "web": "https://tv.youtube.com",
+    "displayName": "YouTube TV"
+  },
+  "HULU_LIVE": {
+    "ios": "hulu://",
+    "android": "intent://#Intent;scheme=hulu;package=com.hulu.plus;S.browser_fallback_url=https%3A%2F%2Fwww.hulu.com%2Flive-tv;end",
+    "web": "https://www.hulu.com/live-tv",
+    "displayName": "Hulu + Live TV"
+  },
+  "FUBO": {
+    "ios": "fubotv://",
+    "android": "intent://#Intent;scheme=fubotv;package=com.fubo.firetv.screen;S.browser_fallback_url=https%3A%2F%2Fwww.fubo.tv;end",
+    "web": "https://www.fubo.tv",
+    "displayName": "Fubo"
+  },
+  "ESPN_PLUS": {
+    "ios": "sportscenter://x-callback-url/showWatch",
+    "android": "intent://#Intent;scheme=espn;package=com.espn.score_center;S.browser_fallback_url=https%3A%2F%2Fplus.espn.com;end",
+    "web": "https://plus.espn.com",
+    "displayName": "ESPN+"
+  },
+  "PEACOCK": {
+    "ios": "peacock://",
+    "android": "intent://#Intent;scheme=peacock;package=com.peacocktv.peacockandroid;S.browser_fallback_url=https%3A%2F%2Fwww.peacocktv.com;end",
+    "web": "https://www.peacocktv.com",
+    "displayName": "Peacock"
+  },
+  "APPLE_TV": {
+    "ios": "videos://",
+    "android": "intent://#Intent;scheme=https;package=com.apple.atve.androidtv.appletv;S.browser_fallback_url=https%3A%2F%2Ftv.apple.com%2Fmls;end",
+    "web": "https://tv.apple.com/mls",
+    "displayName": "Apple TV+"
+  },
+  "PRIME": {
+    "ios": "aiv://aiv/view",
+    "android": "intent://#Intent;scheme=aiv;package=com.amazon.avod.thirdpartyclient;S.browser_fallback_url=https%3A%2F%2Fwww.amazon.com%2FPrime-Video;end",
+    "web": "https://www.amazon.com/Prime-Video",
+    "displayName": "Prime Video"
+  },
+  "SLING": {
+    "ios": "sling://",
+    "android": "intent://#Intent;scheme=sling;package=com.sling;S.browser_fallback_url=https%3A%2F%2Fwww.sling.com;end",
+    "web": "https://www.sling.com",
+    "displayName": "Sling TV"
+  },
+  "DIRECTV_STREAM": {
+    "ios": "directvstream://",
+    "android": "intent://#Intent;scheme=directvstream;package=com.att.tv;S.browser_fallback_url=https%3A%2F%2Fstream.directv.com;end",
+    "web": "https://stream.directv.com",
+    "displayName": "DirecTV Stream"
+  }
+}

@@ -1,0 +1,55 @@
+# Backlog seed
+
+Pre-populate the GitHub Issues with these once the repo is pushed. Each maps to an `M*` milestone from the plan.
+
+## M1 — MLB ingestion
+
+- [ ] Wire `CRON_SECRET` enforcement on `/api/games/refresh` end-to-end
+- [ ] Backfill `Team.logoUrl` from MLB StatsAPI
+- [ ] Handle doubleheaders (two games with same date, same teams)
+- [ ] Handle game suspensions (status mapping + resume detection)
+- [ ] Add observability: log row counts per cron run to a `RefreshAudit` table
+
+## M2 — Onboarding & home view
+
+- [ ] Onboarding ZIP validation (only allow real US ZIPs)
+- [ ] Show "in your market" / "out of market" badge on team picker
+- [ ] Empty state when user has no followed teams
+- [ ] Group home view by day (Today, Tomorrow, …)
+- [ ] Persist subscription edits without resetting follows
+
+## M3 — Deep-link registry & Watch button
+
+- [ ] Audit each deep-link URL on iOS Safari + Android Chrome
+- [ ] Add `<meta name="apple-itunes-app">` smart banner for MLB.tv
+- [ ] Surface a 1-line "what this does" tooltip on Watch button
+- [ ] Handle "no carrying VMVPD" case with a CTA to add a subscription
+
+## M4 — Live scoreboard
+
+- [ ] Pitch-by-pitch state (current batter / pitcher)
+- [ ] Auto-stop polling when game ends
+- [ ] Visual base diamond
+- [ ] Test offline / flaky network handling
+
+## M5 — Push notifications
+
+- [ ] Per-team mute toggle
+- [ ] Quiet hours (no pushes 11pm–8am local)
+- [ ] Test push delivery on iOS PWA (16.4+ only)
+- [ ] Add unsubscribe link in push payload
+
+## M6 — Polish
+
+- [ ] Lighthouse perf budget 90+
+- [ ] Accessibility audit (keyboard nav, screen reader)
+- [ ] Postponement banner + reschedule notification
+- [ ] PWA install prompt UX
+- [ ] Privacy policy + ToS pages
+
+## Tech debt / chores
+
+- [ ] Add Sentry or similar error reporting
+- [ ] Add `RefreshAudit` model for cron observability
+- [ ] CSP headers
+- [ ] Rate-limit `/api/me` PATCH and `/api/follows`

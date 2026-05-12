@@ -1,0 +1,24 @@
+{
+  "dates": [
+    {
+      "date": "2026-05-11",
+      "games": [
+        {
+          "gamePk": 778483,
+          "gameDate": "2026-05-11T23:05:00Z",
+          "status": { "abstractGameState": "Preview", "detailedState": "Scheduled", "statusCode": "S" },
+          "teams": {
+            "home": { "team": { "id": 147, "name": "New York Yankees" } },
+            "away": { "team": { "id": 111, "name": "Boston Red Sox" } }
+          },
+          "venue": { "name": "Yankee Stadium" },
+          "broadcasts": [
+            { "type": "TV", "name": "YES", "callSign": "YES", "homeAway": "home", "isNational": false },
+            { "type": "TV", "name": "NESN", "callSign": "NESN", "homeAway": "away", "isNational": false },
+            { "type": "TV", "name": "MLB.TV", "callSign": "MLB.TV", "isNational": true }
+          ]
+        }
+      ]
+    }
+  ]
+}

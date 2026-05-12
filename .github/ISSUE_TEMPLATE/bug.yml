@@ -1,0 +1,36 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: ["type:bug"]
+body:
+  - type: input
+    id: affected
+    attributes:
+      label: Affected team or game (if applicable)
+      placeholder: "Yankees @ Red Sox, May 11"
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - area:mlb
+        - area:auth
+        - area:deeplinks
+        - area:scoreboard
+        - area:push
+        - area:other
+    validations: { required: true }
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual
+    validations: { required: true }
+  - type: input
+    id: env
+    attributes:
+      label: Browser / OS
+      placeholder: "Chrome 124 on macOS 14"

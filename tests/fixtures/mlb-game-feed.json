@@ -1,0 +1,21 @@
+{
+  "gameData": {
+    "status": { "abstractGameState": "Live", "detailedState": "In Progress" }
+  },
+  "liveData": {
+    "linescore": {
+      "currentInning": 5,
+      "currentInningOrdinal": "5th",
+      "inningHalf": "Top",
+      "isTopInning": true,
+      "outs": 2,
+      "teams": {
+        "home": { "runs": 3 },
+        "away": { "runs": 4 }
+      },
+      "offense": {
+        "first": { "id": 12345 }
+      }
+    }
+  }
+}

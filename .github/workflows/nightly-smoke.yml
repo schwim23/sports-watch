@@ -1,0 +1,33 @@
+name: Nightly live-data smoke
+
+on:
+  schedule:
+    - cron: "0 7 * * *" # 3am ET
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - id: smoke
+        run: pnpm test:smoke
+        continue-on-error: true
+      - name: Open issue on failure
+        if: steps.smoke.outcome == 'failure'
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "[smoke] MLB StatsAPI drift detected ${{ github.run_id }}"
+          content-filepath: ./.github/ISSUE_TEMPLATE/data-source-drift.md
+          labels: |
+            area:mlb
+            type:bug
+            priority:p1
