@@ -13,3 +13,5 @@ coverage/
 playwright-report/
 test-results/
 prisma/migrations/dev.db*
+tsconfig.tsbuildinfo
+*.tsbuildinfo
