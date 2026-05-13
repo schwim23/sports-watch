@@ -51,6 +51,7 @@ Pre-populate the GitHub Issues with these once the repo is pushed. Each maps to 
 - [ ] Postponement banner + reschedule notification
 - [ ] PWA install prompt UX
 - [ ] Privacy policy + ToS pages
+- [ ] **Restyle UI to match MLB.com's visual language** — current `app/globals.css` is a generic dark theme (navy bg `#0b1020`, blue accent `#4f8cff`). Replace with MLB-aligned palette (primary navy ~`#002D72`, red ~`#BF0D3E`, light surfaces) and typography (MLB-style sans — Helvetica Neue / Inter / similar). Audit every component (`GameCard`, `WatchButton`, `OnboardingForm`, `Scoreboard`, `PushToggle`, login + onboarding pages) for consistent spacing, radii, and hover states. Decide whether to stay with hand-rolled CSS or pull in a small token system (e.g., CSS custom properties grouped by `--mlb-*`).
 
 ## Tech debt / chores
 
