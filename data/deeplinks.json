@@ -58,5 +58,11 @@
     "android": "intent://#Intent;scheme=directvstream;package=com.att.tv;S.browser_fallback_url=https%3A%2F%2Fstream.directv.com;end",
     "web": "https://stream.directv.com",
     "displayName": "DirecTV Stream"
+  },
+  "GOTHAM_SPORTS": {
+    "ios": "https://apps.apple.com/us/app/gotham-sports/id6480872271",
+    "android": "https://play.google.com/store/apps/details?id=com.yesnetwork.gothamsports",
+    "web": "https://www.gothamsports.com",
+    "displayName": "Gotham Sports"
   }
 }

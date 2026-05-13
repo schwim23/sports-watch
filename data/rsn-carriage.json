@@ -1,0 +1,44 @@
+{
+  "_comment": "RSN -> VMVPDs that currently carry it + DTC fallback. Last updated 2026-05. For unverified RSNs, callers should fall back to surfacing any user VMVPD and noting that carriage is uncertain. Only NY market (YES/SNY) is verified; the rest need carriage research before launch.",
+  "rsns": {
+    "YES": {
+      "verified": true,
+      "carriers": ["FUBO", "DIRECTV_STREAM"],
+      "dtc": "GOTHAM_SPORTS",
+      "notes": "Not carried by YouTube TV (carriage dispute) or Hulu Live. Gotham Sports is the official DTC app for YES + MSG networks in the NY metro area."
+    },
+    "SNY": {
+      "verified": true,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM"],
+      "dtc": null,
+      "notes": "Added to YouTube TV in 2024. No standalone DTC app."
+    },
+    "NESN": { "verified": false, "carriers": [], "dtc": null },
+    "MASN": { "verified": false, "carriers": [], "dtc": null },
+    "MARQUEE": { "verified": false, "carriers": [], "dtc": null },
+    "NBC_SPORTS_CHICAGO": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_DET": { "verified": false, "carriers": [], "dtc": null },
+    "SPECTRUM_SOCAL": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_SAN_DIEGO": { "verified": false, "carriers": [], "dtc": null },
+    "NBC_SPORTS_BAY": { "verified": false, "carriers": [], "dtc": null },
+    "NBC_SPORTS_CA": { "verified": false, "carriers": [], "dtc": null },
+    "ATTSN_PIT": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_TX": { "verified": false, "carriers": [], "dtc": null },
+    "SPACE_CITY": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_MIA": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_SUN": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_ATL": { "verified": false, "carriers": [], "dtc": null },
+    "ROOT_SPORTS_NW": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_MIL": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_MIN": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_KC": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_STL": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_CIN": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_CLE": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_AZ": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_COL": { "verified": false, "carriers": [], "dtc": null },
+    "NBC_SPORTS_PHI": { "verified": false, "carriers": [], "dtc": null },
+    "BALLY_LAA": { "verified": false, "carriers": [], "dtc": null },
+    "ROGERS_SPORTSNET": { "verified": false, "carriers": [], "dtc": null }
+  }
+}

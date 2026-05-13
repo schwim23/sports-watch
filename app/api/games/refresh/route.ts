@@ -67,7 +67,15 @@ export async function GET(req: NextRequest) {
       skipped++;
       continue;
     }
-    const broadcasts = (g.broadcasts ?? []).map(classifyBroadcast);
+    const seen = new Set<string>();
+    const broadcasts = (g.broadcasts ?? [])
+      .map(classifyBroadcast)
+      .filter((b) => {
+        const key = `${b.type}|${b.callsign ?? ""}|${b.market ?? ""}|${b.service ?? ""}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
     await prisma.game.upsert({
       where: { externalId: String(g.gamePk) },
       create: {

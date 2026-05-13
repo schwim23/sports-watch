@@ -83,6 +83,7 @@ enum StreamingService {
   PRIME
   SLING
   DIRECTV_STREAM
+  GOTHAM_SPORTS
 }
 
 enum BroadcastType {

@@ -1,5 +1,6 @@
 import type { Broadcast, StreamingService, Team } from "@prisma/client";
 import { isTeamInUserMarket, rsnByTeam } from "@/lib/blackouts/zip-to-rsn";
+import { resolveRsnDestination } from "@/lib/broadcasts/carriage";
 
 export type WatchOption = {
   broadcastId: string;
@@ -47,14 +48,15 @@ export function filterBroadcasts({ game, user }: FilterArgs): WatchOption[] {
       const matchesUserMarket = teamAbbr ? isTeamInUserMarket(teamAbbr, user.zip) : false;
       if (matchesUserMarket) {
         const rsn = teamAbbr ? rsnByTeam(teamAbbr) : null;
+        const dest = rsn ? resolveRsnDestination(rsn.id, subs) : null;
         options.push({
           broadcastId: b.id,
           label: rsn?.name ?? b.callsign ?? "Local RSN",
-          service: pickVmvpdForRsn(subs),
+          service: dest?.service ?? null,
           isLocal: true,
           isBlackedOut: false,
           priority: 0,
-          notes: pickVmvpdForRsn(subs) ? `via ${displayService(pickVmvpdForRsn(subs)!)}` : "no carrying subscription",
+          notes: noteForDestination(rsn?.name ?? "this RSN", dest),
         });
       }
       continue;
@@ -104,19 +106,33 @@ export function filterBroadcasts({ game, user }: FilterArgs): WatchOption[] {
 
 const VMVPD_PRIORITY: StreamingService[] = ["YOUTUBE_TV", "HULU_LIVE", "FUBO", "DIRECTV_STREAM", "SLING"];
 
-function pickVmvpdForRsn(subs: Set<StreamingService>): StreamingService | null {
+function pickAnyVmvpd(subs: Set<StreamingService>): StreamingService | null {
   for (const s of VMVPD_PRIORITY) if (subs.has(s)) return s;
   return null;
 }
 
 function nationalCarrier(callsign: string | null, subs: Set<StreamingService>): StreamingService | null {
   const cs = (callsign ?? "").toUpperCase();
-  if (cs.includes("ESPN")) return subs.has("ESPN_PLUS") ? "ESPN_PLUS" : pickVmvpdForRsn(subs);
+  if (cs.includes("ESPN")) return subs.has("ESPN_PLUS") ? "ESPN_PLUS" : pickAnyVmvpd(subs);
   if (cs.includes("PEACOCK")) return "PEACOCK";
   if (cs.includes("APPLE")) return "APPLE_TV";
   if (cs.includes("PRIME") || cs.includes("AMAZON")) return "PRIME";
-  if (cs.includes("FOX") || cs.includes("TBS") || cs.includes("MLB NET")) return pickVmvpdForRsn(subs);
-  return pickVmvpdForRsn(subs);
+  if (cs.includes("FOX") || cs.includes("TBS") || cs.includes("MLB NET")) return pickAnyVmvpd(subs);
+  return pickAnyVmvpd(subs);
+}
+
+function noteForDestination(
+  rsnName: string,
+  dest: { service: StreamingService; source: "user-vmvpd" | "dtc-fallback" | "vmvpd-unverified"; carriageVerified: boolean } | null,
+): string {
+  if (!dest) return `${rsnName} not carried by any of your subscriptions`;
+  if (dest.source === "dtc-fallback") {
+    return `${rsnName} isn't on your VMVPD — watch via ${displayService(dest.service)} (DTC)`;
+  }
+  if (dest.source === "vmvpd-unverified") {
+    return `via ${displayService(dest.service)} (carriage unverified)`;
+  }
+  return `via ${displayService(dest.service)}`;
 }
 
 function displayService(s: StreamingService): string {
@@ -131,6 +147,7 @@ function displayService(s: StreamingService): string {
     case "FUBO": return "Fubo";
     case "SLING": return "Sling TV";
     case "DIRECTV_STREAM": return "DirecTV Stream";
+    case "GOTHAM_SPORTS": return "Gotham Sports";
     default: return s;
   }
 }
