@@ -35,7 +35,10 @@ export function teamsInHomeMarket(zip: string): Set<string> {
   return teams;
 }
 
-export function isTeamInUserMarket(teamAbbreviation: string, zip: string | null | undefined): boolean {
+export function isTeamInUserMarket(
+  teamAbbreviation: string,
+  zip: string | null | undefined,
+): boolean {
   if (!zip) return false;
   return teamsInHomeMarket(zip).has(teamAbbreviation);
 }

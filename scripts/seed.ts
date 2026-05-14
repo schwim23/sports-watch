@@ -5,7 +5,13 @@ import teamsData from "../data/mlb-teams.json" with { type: "json" };
 const prisma = new PrismaClient();
 
 type RsnSeed = { id: string; name: string; teams: string[]; zip3: string[] };
-type TeamSeed = { externalId: string; abbreviation: string; name: string; city: string; primaryRsn: string };
+type TeamSeed = {
+  externalId: string;
+  abbreviation: string;
+  name: string;
+  city: string;
+  primaryRsn: string;
+};
 
 async function main() {
   console.log("Seeding RSNs…");

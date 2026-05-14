@@ -1,50 +1,838 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   sports-watch — "Stadium Broadcast" design system
+   Typography: Oswald (display, condensed) + Source Sans 3 (body)
+   Palette: MLB navy + red, anchored by ink-black bars and a cream paper card
+   ────────────────────────────────────────────────────────────────────────── */
+
 :root {
-  --bg: #0b1020;
-  --surface: #131932;
-  --text: #e7ecff;
-  --muted: #8b95c2;
-  --accent: #4f8cff;
-  --danger: #ff6b6b;
+  /* Brand */
+  --mlb-navy: #002d72;
+  --mlb-navy-dark: #001f50;
+  --mlb-navy-light: #1a4794;
+  --mlb-red: #bf0d3e;
+  --mlb-red-dark: #9a0a32;
+
+  /* Stadium surfaces */
+  --ink: #0b0d12;          /* near-black broadcast bar */
+  --ink-soft: #1a1d26;
+  --paper: #fbf8f1;        /* warm cream — newspaper / scorecard */
+  --paper-edge: #f1ece0;
+  --bg: #eef1f6;           /* cool stadium concrete */
+  --surface: #ffffff;
+  --surface-alt: #fafbfd;
+  --text: #14171f;
+  --text-strong: #05070d;
+  --muted: #5d6577;
+  --muted-soft: #8a91a2;
+  --border: #e3e7ef;
+  --border-strong: #c9cfdb;
+
+  /* Status hues */
+  --live: #d11a2a;
+  --live-glow: rgba(209, 26, 42, 0.18);
+  --final: #2c3340;
+  --warn: #b76a00;
+  --good: #1b7a3a;
+
+  /* Accents */
+  --accent: var(--mlb-navy);
+  --accent-contrast: #ffffff;
+  --danger: var(--mlb-red);
+
+  /* Type stacks — next/font injects --font-oswald and --font-source-sans on <html> */
+  --font-display: var(--font-oswald), "Oswald", "Bebas Neue", "Arial Narrow", sans-serif;
+  --font-body: var(--font-source-sans), "Source Sans 3", "Source Sans Pro", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
+
+  /* Shape */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --shadow-card: 0 1px 0 rgba(11, 13, 18, 0.04), 0 6px 18px -8px rgba(11, 13, 18, 0.12);
+  --shadow-pop: 0 10px 30px -12px rgba(11, 13, 18, 0.28);
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.5;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
+/* Subtle stadium-floor backdrop: hairline grid + warm vignette */
+body {
+  background-image:
+    radial-gradient(1200px 600px at 50% -200px, rgba(0, 45, 114, 0.06), transparent 60%),
+    linear-gradient(180deg, var(--bg) 0%, #e6eaf2 100%);
+  min-height: 100vh;
+}
+
+/* ── Typography ─────────────────────────────────────────────────────────── */
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--text-strong);
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.5rem);
+  line-height: 1;
+  letter-spacing: -0.005em;
+  margin: 1.25rem 0 1rem;
+}
+h2 {
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.6rem;
+  color: var(--text-strong);
+}
+h3 {
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.35rem;
+  color: var(--muted);
+}
+
+/* Section header rule — broadcast ticker style */
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  margin: 1.5rem 0 0.85rem;
+}
+.section-heading h2 {
+  font-size: 1.3rem;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+.section-heading::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, var(--mlb-red) 0, var(--mlb-red) 32px, var(--border) 32px, var(--border) 100%);
+}
+.section-heading .count {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+p {
+  margin: 0.5rem 0;
+}
+
+a {
+  color: var(--mlb-navy);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px solid transparent;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+a:hover {
+  border-bottom-color: currentColor;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
 
 button {
   font: inherit;
-  background: var(--accent);
-  color: white;
-  border: 0;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--mlb-navy);
+  color: var(--accent-contrast);
+  border: 1px solid var(--mlb-navy);
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius);
   cursor: pointer;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    transform 80ms ease,
+    box-shadow 140ms ease;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05), inset 0 -2px 0 rgba(0, 0, 0, 0.12);
 }
-button.secondary { background: var(--surface); color: var(--text); }
-button:disabled { opacity: 0.5; cursor: not-allowed; }
+button:hover:not(:disabled) {
+  background: var(--mlb-navy-light);
+  border-color: var(--mlb-navy-light);
+}
+button:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05), inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+}
+button.secondary {
+  background: var(--surface);
+  color: var(--mlb-navy);
+  border-color: var(--border-strong);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+}
+button.secondary:hover:not(:disabled) {
+  background: var(--surface-alt);
+  border-color: var(--mlb-navy);
+}
+button.danger {
+  background: var(--mlb-red);
+  border-color: var(--mlb-red);
+}
+button.danger:hover:not(:disabled) {
+  background: var(--mlb-red-dark);
+  border-color: var(--mlb-red-dark);
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
 
-input, select {
+/* ── Form controls ──────────────────────────────────────────────────────── */
+
+input,
+select {
   font: inherit;
   background: var(--surface);
   color: var(--text);
-  border: 1px solid #2a3460;
-  border-radius: 8px;
-  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 0.55rem 0.8rem;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--mlb-navy);
+  box-shadow: 0 0 0 3px rgba(0, 45, 114, 0.15);
+}
+input[aria-invalid="true"] {
+  border-color: var(--mlb-red);
+  box-shadow: 0 0 0 3px rgba(191, 13, 62, 0.12);
+}
+input[type="checkbox"] {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--mlb-navy);
 }
 
-.container { max-width: 900px; margin: 0 auto; padding: 1rem; }
-.card { background: var(--surface); border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem; }
-.muted { color: var(--muted); }
-.row { display: flex; gap: 0.75rem; align-items: center; }
-.stack { display: flex; flex-direction: column; gap: 0.5rem; }
+label.row {
+  cursor: pointer;
+  padding: 0.45rem 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: background 120ms ease;
+}
+label.row:hover {
+  background: var(--surface-alt);
+}
+
+/* ── Layout primitives ───────────────────────────────────────────────────── */
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2rem;
+}
+
+.card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  margin-bottom: 0.85rem;
+  box-shadow: var(--shadow-card);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ── Broadcast header ───────────────────────────────────────────────────── */
+
+header {
+  background: var(--ink);
+  color: #ffffff;
+  padding: 0.85rem 1rem !important;
+  border-bottom: 3px solid var(--mlb-red);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+}
+header .brand {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  letter-spacing: 0.18em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+header .brand-mark {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: var(--mlb-red);
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px rgba(209, 26, 42, 0.25);
+}
+header a,
+header nav a,
+header strong {
+  color: #ffffff !important;
+  border-bottom-color: transparent;
+}
+header a:hover {
+  border-bottom-color: var(--mlb-red);
+}
+header nav .row a {
+  font-family: var(--font-display);
+  letter-spacing: 0.14em;
+  font-size: 0.92rem;
+  text-transform: uppercase;
+}
+header button {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  font-size: 0.82rem;
+  padding: 0.4rem 0.8rem;
+}
+header button:hover:not(:disabled) {
+  background: var(--mlb-red);
+  border-color: var(--mlb-red);
+}
+
+/* ── Status pills ───────────────────────────────────────────────────────── */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  background: var(--border);
+  color: var(--text-strong);
+  line-height: 1;
+}
+.pill.live {
+  background: var(--live);
+  color: #fff;
+  box-shadow: 0 0 0 4px var(--live-glow);
+}
+.pill.live::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #fff;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.pill.final {
+  background: var(--final);
+  color: #fff;
+}
+.pill.scheduled {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border-strong);
+}
+.pill.warn {
+  background: rgba(183, 106, 0, 0.12);
+  color: var(--warn);
+}
+.pill.danger {
+  background: rgba(191, 13, 62, 0.12);
+  color: var(--mlb-red);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.7); }
+}
+
+/* ── Game card (scoreboard composition) ─────────────────────────────────── */
+
+.game-card {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--paper-edge);
+  border-radius: var(--radius);
+  overflow: hidden;
+  padding: 0;
+  margin-bottom: 0.85rem;
+  box-shadow: var(--shadow-card);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.game-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-pop);
+}
+.game-card .team-strip {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--mlb-navy) 0%, var(--mlb-navy) 50%, var(--mlb-red) 50%, var(--mlb-red) 100%);
+}
+.game-card .game-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.9rem 1.1rem 0.9rem 1.25rem;
+}
+.matchup {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem 0.85rem;
+}
+.matchup .team {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+.matchup .team-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  color: var(--text-strong);
+}
+.matchup .team-city {
+  font-size: 0.78rem;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+.matchup .score {
+  font-family: var(--font-display);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--text-strong);
+  min-width: 2ch;
+  text-align: right;
+}
+.matchup .vs {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  color: var(--muted-soft);
+  justify-self: center;
+}
+.matchup-row {
+  display: contents;
+}
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.5rem;
+  letter-spacing: 0.01em;
+}
+.meta-row .dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--border-strong);
+}
+
+.watch-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.45rem;
+  min-width: 130px;
+}
+.broadcast-label {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: right;
+}
+.broadcast-label strong {
+  color: var(--text-strong);
+}
+.watch-more {
+  font-size: 0.78rem;
+  color: var(--mlb-navy);
+  font-family: var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 560px) {
+  .game-card .game-grid {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+  .watch-block {
+    align-items: stretch;
+  }
+  .broadcast-label {
+    text-align: left;
+  }
+  .matchup .score {
+    font-size: 1.5rem;
+  }
+}
+
+/* ── Scoreboard (live game) ─────────────────────────────────────────────── */
+
+.scoreboard {
+  background: var(--ink);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 1.1rem 1.2rem;
+  margin-bottom: 0.85rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--ink-soft);
+}
+.scoreboard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(800px 200px at 50% 0%, rgba(255, 255, 255, 0.04), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 3px);
+  pointer-events: none;
+}
+.scoreboard-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.25rem;
+  align-items: center;
+  position: relative;
+}
+.sb-teams {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.4rem 0.85rem;
+  align-items: center;
+}
+.sb-team {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+.sb-team .abbr {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+}
+.sb-team .score {
+  font-family: var(--font-display);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  font-size: 2.4rem;
+  line-height: 1;
+  grid-column: 3;
+  text-align: right;
+}
+.sb-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+.inning {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  color: #fff;
+}
+.inning .half {
+  color: var(--mlb-red);
+  margin-right: 0.35rem;
+}
+.outs {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.outs .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: transparent;
+}
+.outs .dot.on {
+  background: var(--mlb-red);
+  border-color: var(--mlb-red);
+}
+.diamond {
+  width: 64px;
+  height: 64px;
+}
+.diamond .base {
+  fill: transparent;
+  stroke: rgba(255, 255, 255, 0.6);
+  stroke-width: 2;
+  transition: fill 200ms ease;
+}
+.diamond .base.on {
+  fill: var(--mlb-red);
+  stroke: var(--mlb-red);
+}
+.sb-stale {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.04em;
+  margin-top: 0.2rem;
+}
+
+@media (max-width: 560px) {
+  .scoreboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .sb-state {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.85rem;
+  }
+}
+
+/* ── Watch list (game detail) ───────────────────────────────────────────── */
+
+.broadcast-group {
+  border-top: 1px solid var(--border);
+  padding: 0.75rem 0;
+}
+.broadcast-group:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.broadcast-group:last-child {
+  padding-bottom: 0;
+}
+.broadcast-group .head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+.broadcast-group .head strong {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: var(--text-strong);
+}
+.carrier-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.55rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.carrier-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+}
+.carrier-list .has-sub {
+  border-color: var(--mlb-navy);
+  background: rgba(0, 45, 114, 0.04);
+}
+
+/* ── Team / service rows (My Teams, My Services tabs) ───────────────────── */
+
+.team-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.55rem 0.7rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 80ms ease;
+}
+.team-row:hover {
+  border-color: var(--border-strong);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+}
+.team-row-followed {
+  background: var(--paper);
+  border-color: var(--paper-edge);
+  border-left: 3px solid var(--mlb-navy);
+}
+.team-row-name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.03em;
+  color: var(--text-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.55rem;
+}
+.service-tile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.75rem 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+  font-size: 0.95rem;
+  color: var(--text-strong);
+  transition: border-color 140ms ease, background 140ms ease, transform 80ms ease;
+  user-select: none;
+}
+.service-tile:hover {
+  border-color: var(--mlb-navy);
+}
+.service-tile.on {
+  background: rgba(0, 45, 114, 0.05);
+  border-color: var(--mlb-navy);
+  box-shadow: inset 0 0 0 1px var(--mlb-navy);
+}
+.service-tile .check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border-strong);
+  color: transparent;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+  flex-shrink: 0;
+}
+.service-tile.on .check {
+  background: var(--mlb-navy);
+  border-color: var(--mlb-navy);
+  color: #fff;
+}
+.service-tile .check svg {
+  width: 14px;
+  height: 14px;
+}
+.service-tile.saving {
+  opacity: 0.65;
+  cursor: progress;
+}
+.service-tile.error {
+  border-color: var(--mlb-red);
+}
+
+/* ── Login / focused card ───────────────────────────────────────────────── */
+
+.focus-card {
+  max-width: 440px;
+  margin: 4rem auto;
+  padding: 2rem;
+  text-align: center;
+}
+.focus-card h1 {
+  margin-top: 0.5rem;
+  font-size: 2.4rem;
+  letter-spacing: 0.06em;
+}
+.focus-card .tag {
+  display: inline-block;
+  font-family: var(--font-display);
+  letter-spacing: 0.3em;
+  color: var(--mlb-red);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+
+footer {
+  border-top: 1px solid var(--border);
+  margin-top: 2.5rem;
+}
+footer p {
+  font-family: var(--font-display);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* ── Responsive niceties ────────────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+  header nav {
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+  }
+  header nav .row {
+    gap: 0.8rem !important;
+    flex-wrap: wrap;
+  }
+  header nav .row a {
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem 0.85rem 2rem;
+  }
+  header {
+    padding: 0.7rem 0.85rem !important;
+  }
+  header .brand {
+    font-size: 1.05rem;
+  }
+  header nav .row a {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+  }
+}

@@ -16,6 +16,29 @@ type State = {
 
 const POLL_MS = 15_000;
 
+function Diamond({ first, second, third }: { first?: boolean; second?: boolean; third?: boolean }) {
+  // Standard baseball diamond rotated 45°: home bottom, 1B right, 2B top, 3B left.
+  return (
+    <svg className="diamond" viewBox="0 0 64 64" aria-label="bases">
+      <g transform="translate(32 32) rotate(45)">
+        <rect className={`base ${second ? "on" : ""}`} x="-26" y="-26" width="12" height="12" rx="1" />
+        <rect className={`base ${third ? "on" : ""}`} x="-26" y="14" width="12" height="12" rx="1" />
+        <rect className={`base ${first ? "on" : ""}`} x="14" y="-26" width="12" height="12" rx="1" />
+        <rect
+          fill="rgba(255,255,255,0.15)"
+          stroke="rgba(255,255,255,0.4)"
+          strokeWidth="2"
+          x="14"
+          y="14"
+          width="12"
+          height="12"
+          rx="1"
+        />
+      </g>
+    </svg>
+  );
+}
+
 export default function Scoreboard({ gameId, initial }: { gameId: string; initial: State }) {
   const [state, setState] = useState(initial);
   const [err, setErr] = useState(0);
@@ -51,21 +74,47 @@ export default function Scoreboard({ gameId, initial }: { gameId: string; initia
   }, [gameId, state.status]);
 
   const bases = state.baseState ?? {};
+  const outs = state.outs ?? 0;
+  const isLive = state.status === "IN_PROGRESS";
+
   return (
-    <div className="card">
-      <div className="row" style={{ justifyContent: "space-between" }}>
-        <div>
-          <div><strong>{state.awayAbbr}</strong> {state.awayScore ?? 0}</div>
-          <div><strong>{state.homeAbbr}</strong> {state.homeScore ?? 0}</div>
-        </div>
-        <div className="stack" style={{ alignItems: "flex-end" }}>
-          <div>{state.inningHalf ?? ""} {state.inningOrdinal ?? ""}</div>
-          <div className="muted">Outs: {state.outs ?? 0}</div>
-          <div className="muted">
-            Bases: {bases.first ? "1B " : ""}{bases.second ? "2B " : ""}{bases.third ? "3B" : ""}
-            {!bases.first && !bases.second && !bases.third ? "—" : ""}
+    <div className="scoreboard">
+      <div className="scoreboard-grid">
+        <div className="sb-teams">
+          <div className="sb-team">
+            <span className="abbr">{state.awayAbbr}</span>
           </div>
-          {err > 0 ? <div className="muted">Refresh delayed…</div> : null}
+          <span />
+          <span className="score">{state.awayScore ?? 0}</span>
+
+          <div className="sb-team">
+            <span className="abbr">{state.homeAbbr}</span>
+          </div>
+          <span />
+          <span className="score">{state.homeScore ?? 0}</span>
+        </div>
+
+        <div className="sb-state">
+          {isLive ? (
+            <>
+              <span className="inning">
+                <span className="half">{state.inningHalf ?? "—"}</span>
+                {state.inningOrdinal ?? ""}
+              </span>
+              <Diamond first={bases.first} second={bases.second} third={bases.third} />
+              <div className="outs" aria-label={`${outs} outs`}>
+                <span className={`dot ${outs >= 1 ? "on" : ""}`} />
+                <span className={`dot ${outs >= 2 ? "on" : ""}`} />
+                <span className={`dot ${outs >= 3 ? "on" : ""}`} />
+                <span style={{ marginLeft: 6, fontSize: "0.78rem", letterSpacing: "0.12em" }}>
+                  OUT{outs === 1 ? "" : "S"}
+                </span>
+              </div>
+            </>
+          ) : (
+            <span className="inning">{state.status.replace("_", " ")}</span>
+          )}
+          {err > 0 ? <div className="sb-stale">Refresh delayed…</div> : null}
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 {
-  "_comment": "RSN -> VMVPDs that currently carry it + DTC fallback. Last updated 2026-05. For unverified RSNs, callers should fall back to surfacing any user VMVPD and noting that carriage is uncertain. Only NY market (YES/SNY) is verified; the rest need carriage research before launch.",
+  "_comment": "RSN -> VMVPDs that currently carry it + DTC fallback. Last updated 2026-05. Only YES + SNY are verified=true (NY metro confirmed). For all other RSNs, `carriers` is populated with best-known VMVPD distribution as of the Diamond Sports → FanDuel Sports Network rebrand, but `verified: false` so the UI surfaces a 'carriage unverified' disclaimer. Confirm against each VMVPD's live channel lineup before flipping verified=true.",
   "rsns": {
     "YES": {
       "verified": true,
@@ -13,32 +13,193 @@
       "dtc": null,
       "notes": "Added to YouTube TV in 2024. No standalone DTC app."
     },
-    "NESN": { "verified": false, "carriers": [], "dtc": null },
-    "MASN": { "verified": false, "carriers": [], "dtc": null },
-    "MARQUEE": { "verified": false, "carriers": [], "dtc": null },
-    "NBC_SPORTS_CHICAGO": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_DET": { "verified": false, "carriers": [], "dtc": null },
-    "SPECTRUM_SOCAL": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_SAN_DIEGO": { "verified": false, "carriers": [], "dtc": null },
-    "NBC_SPORTS_BAY": { "verified": false, "carriers": [], "dtc": null },
-    "NBC_SPORTS_CA": { "verified": false, "carriers": [], "dtc": null },
-    "ATTSN_PIT": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_TX": { "verified": false, "carriers": [], "dtc": null },
-    "SPACE_CITY": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_MIA": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_SUN": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_ATL": { "verified": false, "carriers": [], "dtc": null },
-    "ROOT_SPORTS_NW": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_MIL": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_MIN": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_KC": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_STL": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_CIN": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_CLE": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_AZ": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_COL": { "verified": false, "carriers": [], "dtc": null },
-    "NBC_SPORTS_PHI": { "verified": false, "carriers": [], "dtc": null },
-    "BALLY_LAA": { "verified": false, "carriers": [], "dtc": null },
-    "ROGERS_SPORTSNET": { "verified": false, "carriers": [], "dtc": null }
+    "NESN": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM"],
+      "dtc": null,
+      "notes": "Boston market only; NESN 360 is the DTC app but not modeled as a StreamingService yet."
+    },
+    "MASN": {
+      "verified": false,
+      "carriers": ["DIRECTV_STREAM"],
+      "dtc": null,
+      "notes": "Very limited VMVPD distribution. Most cord-cutters can't watch Orioles/Nationals live."
+    },
+    "MARQUEE": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM"],
+      "dtc": null
+    },
+    "NBC_SPORTS_CHICAGO": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM", "HULU_LIVE"],
+      "dtc": null,
+      "notes": "NBC Sports RSNs broadly carried by major VMVPDs."
+    },
+    "BALLY_DET": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM"],
+      "dtc": null,
+      "notes": "Rebranded as FanDuel Sports Network Detroit post-Diamond Sports bankruptcy."
+    },
+    "SPECTRUM_SOCAL": {
+      "verified": false,
+      "carriers": ["FUBO", "DIRECTV_STREAM"],
+      "dtc": null,
+      "notes": "Spectrum cable is the primary carrier; very limited VMVPD distribution."
+    },
+    "BALLY_SAN_DIEGO": {
+      "verified": false,
+      "carriers": ["DIRECTV_STREAM"],
+      "dtc": null,
+      "notes": "Padres broadcasts; limited VMVPD carriage post-rebrand."
+    },
+    "NBC_SPORTS_BAY": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM", "HULU_LIVE"],
+      "dtc": null
+    },
+    "NBC_SPORTS_CA": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM", "HULU_LIVE"],
+      "dtc": null
+    },
+    "ATTSN_PIT": {
+      "verified": false,
+      "carriers": ["DIRECTV_STREAM", "FUBO"],
+      "dtc": null,
+      "notes": "AT&T SportsNet Pittsburgh shuttered; replaced by SportsNet PIT. DTC app launching."
+    },
+    "BALLY_TX": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM"],
+      "dtc": null,
+      "notes": "Rebranded FanDuel Sports Network Texas."
+    },
+    "SPACE_CITY": {
+      "verified": false,
+      "carriers": ["DIRECTV_STREAM", "FUBO"],
+      "dtc": null,
+      "notes": "Astros + Rockets joint venture. Limited VMVPD distribution."
+    },
+    "BALLY_MIA": {
+      "verified": false,
+      "carriers": ["DIRECTV_STREAM", "FUBO"],
+      "dtc": null
+    },
+    "BALLY_SUN": {
+      "verified": false,
+      "carriers": ["DIRECTV_STREAM", "FUBO"],
+      "dtc": null,
+      "notes": "Rays broadcasts; rebranded FanDuel Sports Network Sun."
+    },
+    "BALLY_ATL": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM"],
+      "dtc": null
+    },
+    "ROOT_SPORTS_NW": {
+      "verified": false,
+      "carriers": ["DIRECTV_STREAM", "FUBO"],
+      "dtc": null,
+      "notes": "Mariners broadcasts; DTC ROOT Sports app exists but not modeled here."
+    },
+    "BALLY_MIL": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM"],
+      "dtc": null
+    },
+    "BALLY_MIN": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM"],
+      "dtc": null
+    },
+    "BALLY_KC": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM"],
+      "dtc": null
+    },
+    "BALLY_STL": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM"],
+      "dtc": null
+    },
+    "BALLY_CIN": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM"],
+      "dtc": null
+    },
+    "BALLY_CLE": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM"],
+      "dtc": null
+    },
+    "BALLY_AZ": {
+      "verified": false,
+      "carriers": ["DIRECTV_STREAM", "FUBO"],
+      "dtc": null,
+      "notes": "Diamondbacks broadcasts; carriage in flux post-Diamond Sports bankruptcy."
+    },
+    "BALLY_COL": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM"],
+      "dtc": null,
+      "notes": "Rockies broadcasts."
+    },
+    "NBC_SPORTS_PHI": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "FUBO", "DIRECTV_STREAM", "HULU_LIVE"],
+      "dtc": null
+    },
+    "BALLY_LAA": {
+      "verified": false,
+      "carriers": ["DIRECTV_STREAM", "FUBO"],
+      "dtc": null,
+      "notes": "Angels broadcasts; rebranded FanDuel Sports Network West."
+    },
+    "ROGERS_SPORTSNET": {
+      "verified": false,
+      "carriers": ["DIRECTV_STREAM", "FUBO"],
+      "dtc": null,
+      "notes": "Canadian RSN for Blue Jays. Sportsnet NOW is the DTC app (not modeled in this enum)."
+    }
+  },
+  "nationals": {
+    "FOX": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "HULU_LIVE", "FUBO", "DIRECTV_STREAM", "SLING"],
+      "dtc": null,
+      "notes": "FOX broadcasts are widely carried but vary by local affiliate."
+    },
+    "FS1": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "HULU_LIVE", "FUBO", "DIRECTV_STREAM", "SLING"],
+      "dtc": null
+    },
+    "TBS": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "HULU_LIVE", "FUBO", "DIRECTV_STREAM", "SLING"],
+      "dtc": null
+    },
+    "MLB_NETWORK": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "HULU_LIVE", "FUBO", "DIRECTV_STREAM", "SLING"],
+      "dtc": null
+    },
+    "ESPN": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "HULU_LIVE", "FUBO", "DIRECTV_STREAM", "SLING"],
+      "dtc": null
+    },
+    "ESPN2": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "HULU_LIVE", "FUBO", "DIRECTV_STREAM", "SLING"],
+      "dtc": null
+    },
+    "ESPNU": {
+      "verified": false,
+      "carriers": ["YOUTUBE_TV", "HULU_LIVE", "FUBO", "DIRECTV_STREAM"],
+      "dtc": null
+    }
   }
 }

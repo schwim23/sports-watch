@@ -3,7 +3,9 @@ import { rsnsForZip, teamsInHomeMarket, isTeamInUserMarket } from "@/lib/blackou
 
 describe("zip-to-rsn", () => {
   it("maps NYC ZIPs to YES + SNY", () => {
-    const ids = rsnsForZip("10001").map((r) => r.id).sort();
+    const ids = rsnsForZip("10001")
+      .map((r) => r.id)
+      .sort();
     expect(ids).toContain("YES");
     expect(ids).toContain("SNY");
   });

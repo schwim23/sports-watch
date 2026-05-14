@@ -8,15 +8,15 @@ MVP league: **MLB**. Other leagues (NHL, NBA, NFL) come post-launch.
 
 Scaffolded by milestone M0. See [the plan](../.claude/plans/i-am-interested-in-indexed-orbit.md) for the full roadmap.
 
-| Milestone | Status |
-|---|---|
-| M0 — scaffolding | in progress |
-| M1 — MLB ingestion | pending |
-| M2 — onboarding + home view | pending |
-| M3 — deep-link registry + Watch button | pending |
-| M4 — live scoreboard | pending |
-| M5 — push notifications | pending |
-| M6 — polish | pending |
+| Milestone                              | Status      |
+| -------------------------------------- | ----------- |
+| M0 — scaffolding                       | in progress |
+| M1 — MLB ingestion                     | pending     |
+| M2 — onboarding + home view            | pending     |
+| M3 — deep-link registry + Watch button | pending     |
+| M4 — live scoreboard                   | pending     |
+| M5 — push notifications                | pending     |
+| M6 — polish                            | pending     |
 
 ## Prerequisites
 

@@ -31,9 +31,19 @@ function classifyBroadcast(b: MlbBroadcast): {
     else if (name.includes("APPLE")) service = "APPLE_TV";
     else if (name.includes("PRIME") || name.includes("AMAZON")) service = "PRIME";
     if (service) {
-      return { type: "STREAMING_EXCLUSIVE", callsign: b.callSign ?? b.name ?? null, market: "national", service };
+      return {
+        type: "STREAMING_EXCLUSIVE",
+        callsign: b.callSign ?? b.name ?? null,
+        market: "national",
+        service,
+      };
     }
-    return { type: "NATIONAL", callsign: b.callSign ?? b.name ?? null, market: "national", service: null };
+    return {
+      type: "NATIONAL",
+      callsign: b.callSign ?? b.name ?? null,
+      market: "national",
+      service: null,
+    };
   }
   return {
     type: "LOCAL_RSN",
@@ -46,64 +56,98 @@ function classifyBroadcast(b: MlbBroadcast): {
 export async function GET(req: NextRequest) {
   if (!authorized(req)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  const today = new Date();
-  const end = new Date(today);
-  end.setUTCDate(today.getUTCDate() + 14);
+  const audit = await prisma.refreshAudit.create({ data: { source: "games" } });
 
-  const games = await fetchSchedule({ startDate: ymd(today), endDate: ymd(end) });
+  try {
+    const today = new Date();
+    const end = new Date(today);
+    end.setUTCDate(today.getUTCDate() + 14);
 
-  const teams = await prisma.team.findMany({ where: { sport: "MLB" } });
-  const teamByExt = new Map(teams.map((t) => [t.externalId, t]));
+    const games = await fetchSchedule({ startDate: ymd(today), endDate: ymd(end) });
 
-  let upserted = 0;
-  let skipped = 0;
+    const teams = await prisma.team.findMany({ where: { sport: "MLB" } });
+    const teamByExt = new Map(teams.map((t) => [t.externalId, t]));
 
-  for (const g of games) {
-    const homeId = String(g.teams.home.team.id);
-    const awayId = String(g.teams.away.team.id);
-    const home = teamByExt.get(homeId);
-    const away = teamByExt.get(awayId);
-    if (!home || !away) {
-      skipped++;
-      continue;
-    }
-    const seen = new Set<string>();
-    const broadcasts = (g.broadcasts ?? [])
-      .map(classifyBroadcast)
-      .filter((b) => {
+    let upserted = 0;
+    let skipped = 0;
+
+    for (const g of games) {
+      const homeId = String(g.teams.home.team.id);
+      const awayId = String(g.teams.away.team.id);
+      const home = teamByExt.get(homeId);
+      const away = teamByExt.get(awayId);
+      if (!home || !away) {
+        skipped++;
+        continue;
+      }
+      const seen = new Set<string>();
+      const broadcasts = (g.broadcasts ?? []).map(classifyBroadcast).filter((b) => {
         const key = `${b.type}|${b.callsign ?? ""}|${b.market ?? ""}|${b.service ?? ""}`;
         if (seen.has(key)) return false;
         seen.add(key);
         return true;
       });
-    await prisma.game.upsert({
-      where: { externalId: String(g.gamePk) },
-      create: {
-        externalId: String(g.gamePk),
-        sport: "MLB",
-        homeTeamId: home.id,
-        awayTeamId: away.id,
-        startsAt: new Date(g.gameDate),
-        status: mapStatus(g.status.detailedState),
-        venueName: g.venue?.name,
-        seasonType: g.seriesDescription ?? null,
-        broadcasts: {
-          create: broadcasts.map((b) => ({
-            type: b.type,
-            callsign: b.callsign,
-            market: b.market,
-            service: b.service,
-          })),
-        },
-      },
-      update: {
-        startsAt: new Date(g.gameDate),
-        status: mapStatus(g.status.detailedState),
-        venueName: g.venue?.name,
+
+      // Replace broadcasts on every refresh. MLB's broadcasts list changes as
+      // games get locked to exclusives (Apple FNB / Peacock Sunday Leadoff) —
+      // if we only wrote them on create, stale RSN entries would linger.
+      await prisma.$transaction(async (tx) => {
+        const game = await tx.game.upsert({
+          where: { externalId: String(g.gamePk) },
+          create: {
+            externalId: String(g.gamePk),
+            sport: "MLB",
+            homeTeamId: home.id,
+            awayTeamId: away.id,
+            startsAt: new Date(g.gameDate),
+            status: mapStatus(g.status.detailedState),
+            venueName: g.venue?.name,
+            seasonType: g.seriesDescription ?? null,
+          },
+          update: {
+            startsAt: new Date(g.gameDate),
+            status: mapStatus(g.status.detailedState),
+            venueName: g.venue?.name,
+          },
+          select: { id: true },
+        });
+        await tx.broadcast.deleteMany({ where: { gameId: game.id } });
+        if (broadcasts.length > 0) {
+          await tx.broadcast.createMany({
+            data: broadcasts.map((b) => ({
+              gameId: game.id,
+              type: b.type,
+              callsign: b.callsign,
+              market: b.market,
+              service: b.service,
+            })),
+          });
+        }
+      });
+      upserted++;
+    }
+
+    await prisma.refreshAudit.update({
+      where: { id: audit.id },
+      data: {
+        ok: true,
+        finishedAt: new Date(),
+        rowsProcessed: games.length,
+        rowsUpdated: upserted,
+        rowsSkipped: skipped,
       },
     });
-    upserted++;
-  }
 
-  return NextResponse.json({ ok: true, upserted, skipped, fetched: games.length });
+    return NextResponse.json({ ok: true, upserted, skipped, fetched: games.length });
+  } catch (err) {
+    await prisma.refreshAudit.update({
+      where: { id: audit.id },
+      data: {
+        ok: false,
+        finishedAt: new Date(),
+        errorMessage: (err as Error).message,
+      },
+    });
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  }
 }

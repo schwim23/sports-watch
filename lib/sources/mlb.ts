@@ -58,15 +58,19 @@ const liveFeedSchema = z.object({
       inningHalf: z.string().optional(),
       isTopInning: z.boolean().optional(),
       outs: z.number().optional(),
-      teams: z.object({
-        home: z.object({ runs: z.number().optional() }).optional(),
-        away: z.object({ runs: z.number().optional() }).optional(),
-      }).optional(),
-      offense: z.object({
-        first: z.object({ id: z.number() }).optional(),
-        second: z.object({ id: z.number() }).optional(),
-        third: z.object({ id: z.number() }).optional(),
-      }).optional(),
+      teams: z
+        .object({
+          home: z.object({ runs: z.number().optional() }).optional(),
+          away: z.object({ runs: z.number().optional() }).optional(),
+        })
+        .optional(),
+      offense: z
+        .object({
+          first: z.object({ id: z.number() }).optional(),
+          second: z.object({ id: z.number() }).optional(),
+          third: z.object({ id: z.number() }).optional(),
+        })
+        .optional(),
     }),
   }),
 });
@@ -113,7 +117,9 @@ export function mapStatus(detailedState: string): import("@prisma/client").GameS
   if (s.includes("postponed")) return "POSTPONED";
   if (s.includes("suspended")) return "SUSPENDED";
   if (s.includes("cancel")) return "CANCELLED";
-  if (s.includes("in progress") || s.includes("manager challenge") || s.includes("delayed: ")) return "IN_PROGRESS";
-  if (s.includes("warmup") || s.includes("pre-game") || s.includes("delayed start")) return "PRE_GAME";
+  if (s.includes("in progress") || s.includes("manager challenge") || s.includes("delayed: "))
+    return "IN_PROGRESS";
+  if (s.includes("warmup") || s.includes("pre-game") || s.includes("delayed start"))
+    return "PRE_GAME";
   return "SCHEDULED";
 }

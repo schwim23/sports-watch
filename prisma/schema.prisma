@@ -17,6 +17,11 @@ model User {
   image         String?
   emailVerified DateTime?
   zip           String?
+  // Notification preferences. Times are local hour-of-day (0-23) in the user's
+  // device timezone; quietStart >= quietEnd means "wraps over midnight".
+  quietStart    Int?
+  quietEnd      Int?
+  timezone      String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -119,6 +124,8 @@ model TeamFollow {
   id        String   @id @default(cuid())
   userId    String
   teamId    String
+  // Mute pre-game pushes for this team without unfollowing.
+  notifyMuted Boolean @default(false)
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -229,4 +236,18 @@ model NotificationLog {
 
   @@unique([userId, gameId, type])
   @@index([sentAt])
+}
+
+model RefreshAudit {
+  id            String    @id @default(cuid())
+  source        String // "games" | "live-status" | "notifications"
+  startedAt     DateTime  @default(now())
+  finishedAt    DateTime?
+  ok            Boolean   @default(false)
+  rowsProcessed Int       @default(0)
+  rowsUpdated   Int       @default(0)
+  rowsSkipped   Int       @default(0)
+  errorMessage  String?
+
+  @@index([source, startedAt])
 }

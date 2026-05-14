@@ -59,3 +59,9 @@ Pre-populate the GitHub Issues with these once the repo is pushed. Each maps to 
 - [ ] Add `RefreshAudit` model for cron observability
 - [ ] CSP headers
 - [ ] Rate-limit `/api/me` PATCH and `/api/follows`
+- [ ] **Capture StatsAPI `availability.availabilityCode` on Broadcast.** MLB tags every broadcast with `availability: { availabilityCode: "exclusive" | "national" | "local_in_market" | "local_out_of_market" | ... }`. Today our classifier in `app/api/games/refresh/route.ts` ignores it; the filter falls back to a hardcoded `RSN_DARK_EXCLUSIVES = {APPLE_TV, PEACOCK}` set in `lib/broadcasts/filter.ts` to decide when to suppress stale RSN entries (see `memory/rsn-dark-exclusives.md`). Replace the hardcoded set with the API signal so new exclusive deals (e.g., Roku Sunday Leadoff, future Prime team packages) work without code changes. Scope:
+  - Schema: add `Broadcast.exclusive Boolean @default(false)` (or `availability String?` if we want the full enum) + migration.
+  - Source schema: extend `broadcastSchema` in `lib/sources/mlb.ts` to parse the `availability` object.
+  - Classifier: set `exclusive` when `availabilityCode === "exclusive"`.
+  - Filter: replace `RSN_DARK_EXCLUSIVES` lookup with `game.broadcasts.some(b => b.exclusive && b.type === "STREAMING_EXCLUSIVE")`.
+  - Tests: extend `tests/unit/broadcast-filter.test.ts` cases to pass the `exclusive` flag and verify suppression still fires.

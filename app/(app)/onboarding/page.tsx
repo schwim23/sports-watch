@@ -11,7 +11,14 @@ export default async function OnboardingPage() {
     prisma.team.findMany({
       where: { sport: "MLB" },
       orderBy: [{ city: "asc" }],
-      select: { id: true, name: true, city: true, abbreviation: true },
+      select: {
+        id: true,
+        name: true,
+        city: true,
+        abbreviation: true,
+        externalId: true,
+        logoUrl: true,
+      },
     }),
     prisma.user.findUnique({
       where: { id: session.user.id },
