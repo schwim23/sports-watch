@@ -4,14 +4,6 @@
     {
       "path": "/api/games/refresh",
       "schedule": "0 10 * * *"
-    },
-    {
-      "path": "/api/games/refresh-status",
-      "schedule": "*/15 0-7,16-23 * * *"
-    },
-    {
-      "path": "/api/notifications/dispatch",
-      "schedule": "*/5 * * * *"
     }
   ]
 }
