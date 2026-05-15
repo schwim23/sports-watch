@@ -7,7 +7,7 @@
     },
     {
       "path": "/api/games/refresh-status",
-      "schedule": "*/15 16-7 * * *"
+      "schedule": "*/15 0-7,16-23 * * *"
     },
     {
       "path": "/api/notifications/dispatch",
